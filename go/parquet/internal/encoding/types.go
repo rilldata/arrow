@@ -185,9 +185,9 @@ func (b *PooledBufferWriter) Reserve(nbytes int) {
 		b.buf = bufferPool.Get().(*memory.Buffer)
 	}
 
-	newCap := utils.MaxInt(b.buf.Cap()+b.offset, 256)
+	newCap := utils.MaxInt(b.buf.Cap(), 256)
 	for newCap < b.pos+nbytes {
-		newCap = bitutil.NextPowerOf2(newCap)
+		newCap = bitutil.NextPowerOf2(b.pos + nbytes)
 	}
 	b.buf.Reserve(newCap)
 }
@@ -375,9 +375,9 @@ func (b *BufferWriter) Reserve(nbytes int) {
 	if b.buffer == nil {
 		b.buffer = memory.NewResizableBuffer(b.mem)
 	}
-	newCap := utils.MaxInt(b.buffer.Cap()+b.offset, 256)
-	for newCap < b.pos+nbytes+b.offset {
-		newCap = bitutil.NextPowerOf2(newCap)
+	newCap := utils.MaxInt(b.buffer.Cap(), 256)
+	for newCap < b.pos+nbytes {
+		newCap = bitutil.NextPowerOf2(b.pos + nbytes)
 	}
 	b.buffer.Reserve(newCap)
 }
